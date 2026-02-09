@@ -11,27 +11,42 @@
 class Solution {
 public:
     ListNode* sortList(ListNode* head) {
-
         if(!head || !head->next) return head;
-        vector<int> tempArr;
 
-        ListNode* temp = head;
-        while(temp != nullptr){
-            tempArr.push_back(temp->val);
-            temp = temp->next;
+        ListNode* slow = head;
+        ListNode* fast = head->next;
+
+        while(fast && fast->next){
+            slow = slow->next;
+            fast = fast->next->next;
         }
 
-        sort(tempArr.begin(),tempArr.end());
+        ListNode* mid = slow->next;
+        slow->next = nullptr;
 
-        temp = head;
+        ListNode* left = sortList(head);
+        ListNode* right = sortList(mid);
 
-        int i = 0;
-        while(temp != nullptr){
-            temp->val = tempArr[i];
-            i++;
-            temp = temp->next;
+        return merge(left,right);
+    }
+
+    ListNode* merge(ListNode* left,ListNode* right){
+        ListNode dummy;
+        ListNode* tail = &dummy;
+
+        while(left && right){
+            if(left->val < right->val){
+                tail->next = left;
+                left = left->next;
+            }else{
+                tail->next = right;
+                right = right->next;
+            }
+            tail = tail->next;
         }
 
-        return head;
+        tail->next = left ? left : right;
+
+        return dummy.next;
     }
 };
