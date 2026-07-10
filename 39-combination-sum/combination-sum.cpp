@@ -1,38 +1,26 @@
 class Solution {
 public:
-
-    int curr_target;
-    vector<vector<int>> ans;
-
-    void solve(vector<int>& arr,int i,int sum,vector<int> op){
-        if(i >= arr.size()){
-            return;
-        }
-        if(arr[i] + sum == curr_target){
-            op.push_back(arr[i]);
-            ans.push_back(op);
+    void solve(int index,vector<int>& candidates,int target,vector<int>& current,vector<vector<int>>& ans){
+        if(target == 0){
+            ans.push_back(current);
             return;
         }
 
-        if(arr[i] + sum < curr_target){
-            vector<int> op1 = op;
-            vector<int> op2 = op;
+        if(target < 0 || index == candidates.size())
+            return;
+        
+        current.push_back(candidates[index]);
+        solve(index,candidates,target-candidates[index],current,ans);
+        current.pop_back();
 
-            op2.push_back(arr[i]);
-            solve(arr,i,sum+arr[i],op2);
-            solve(arr,i+1,sum,op1);
-        }else{
-            solve(arr,i+1,sum,op);
-        }
+        solve(index+1,candidates,target,current,ans);
     }
 
-    vector<vector<int>> combinationSum(vector<int>& arr, int target) {
-        ans.clear();
+    vector<vector<int>> combinationSum(vector<int>& candidates, int target) {
+        vector<vector<int>> ans;
+        vector<int> current;
 
-        curr_target = target;
-        vector<int> op;
-        sort(arr.begin(),arr.end());
-        solve(arr,0,0,op);
+        solve(0,candidates,target,current,ans);
 
         return ans;
     }
